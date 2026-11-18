@@ -36,6 +36,9 @@ for file in "$here"/agents/*.md; do
 	installed=$((installed + 1))
 done
 
+# reflect reads this file to find the clone, so that skill edits land in the source.
+printf '%s\n' "$here" > "$dest/skills/messi-mode/SOURCE"
+
 echo "Installed $installed items into $dest."
 if [ "${#skipped[@]}" -gt 0 ]; then
 	echo "Skipped, because a different version already exists:"

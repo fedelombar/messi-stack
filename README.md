@@ -178,6 +178,8 @@ python3 tools/check.py out
 
 4. Compare `out/` with `skills/` and `agents/`, copy what you want, and run `./install.sh --force`.
 
+After a long task, type `/reflect`. It proposes edits to the skills from what the session taught, and it waits for your approval. `install.sh` records the path of your clone in `~/.claude/skills/messi-mode/SOURCE`, so `reflect` makes the approved edits in the clone and not in the installed copy.
+
 To rename the mode, rename the `messi-mode` folder and the `messi-agent` file, and replace both names in `tools/`.
 
 ## Repository layout

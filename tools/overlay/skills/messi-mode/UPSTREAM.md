@@ -28,7 +28,7 @@ Edited in place. Every edit is a replacement in `tools/build.py`, which fails wh
 - Model lines in arena, swarm, interrogate and the code playbooks point at the Subagents section of messi-mode.
 - Feature playbook: the arena step can be skipped with a stated reason.
 - no-comments: the repo's comment-style skill decides what stays.
-- reflect: project and user learnings go to memory, not into a skill.
+- reflect: project and user learnings go to memory, not into a skill. Edits to a messi-stack skill go to the clone named in `SOURCE`, not to the installed copy.
 - Removed references to things not copied: create-skill, cursor-team-kit, automate-me, `/visualize`, Origin's CLI.
 - Babysit: status from `gh`, review-bot triage in place of Bugbot triage.
 - recall, eval, session-pickup, worktree-audit.sh: transcripts under `~/.claude/projects/`.

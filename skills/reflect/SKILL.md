@@ -17,3 +17,5 @@ Present Accepted (problem, proposal, skill), Rejected (reason) and Backlog, and 
 Never edit a skill under `plugins/cache/`. Before approval, show its destination, `.claude/skills/<skill>/` in the repo or `~/.claude/skills/<skill>/`. After approval, edit the skill there, copying a plugin's skill folder there first. A repo skill is shared with the team, so its edit is a normal change on a branch. Never open a PR or push.
 
 A learning about the user or the project that is not a rule for a skill goes to the session's memory directory when the session has one, not into a skill.
+
+A messi-stack skill is built from a clone, and an edit to the installed copy is lost at the next install. When `~/.claude/skills/messi-mode/SOURCE` exists, it holds the path of that clone. Make the edit there: in `tools/overlay/` for a hand-written file, or as one replacement in `tools/build.py` for a file that comes from pstack. Then rebuild, run `tools/check.py`, copy the changed files into `~/.claude`, and commit in the clone. Do not push.
