@@ -102,6 +102,15 @@ A write the user asked for in this task is authorized once, for that scope. It d
 
 **Use `subagent_type: "messi-agent"` for any agent you spawn directly inside a playbook step.** The chat that receives `/messi-mode` runs the playbook itself. Routed skills (**interrogate**, **swarm**, **arena**, **how**, **no-comments**) set their own agent type. Respect it. When the Agent tool does not list `messi-agent`, as in a session started before it was installed, use `general-purpose`. The `worker.md` first line still applies.
 
+**When to delegate.** Each subagent starts with its own context, about 50,000 tokens before it reads a file. A playbook line that says to delegate applies when at least one of these holds:
+
+- The change touches more than three files.
+- Two or more pieces of the work can run at the same time.
+- The work needs bulk reading whose content the main thread does not need.
+- The session runs on a model other than Opus or Fable, and the work writes code.
+
+Otherwise write the code yourself in the main thread and say so in the report. The data shape, the playbook steps, and the verification stay the same. This rule wins over a playbook's "delegate" line.
+
 **Briefs.** File pointers, not pasted context. One goal, one scope, how to verify, what to report. Agents run in the background by default and notify you when they finish. Do not poll them.
 
 **Models.** Pass `model` on every `Agent` call that writes or changes code:
@@ -129,11 +138,15 @@ Use `-s workspace-write` for a seat that must write and run a repro, and `-s rea
 
 If `codex` is missing or the call fails, that seat is a named dropout. Run the panel without it, and say that the vendor check did not run. Never fill a GPT seat with a Claude agent. Do not use the `ocx-*` agent types for a GPT seat unless `ocx status` shows the proxy running. Without the proxy they run on Claude and still claim to be GPT.
 
-**Verification** of a delegate's work runs on a fresh `general-purpose` agent, or on the real surface yourself.
+**Verification** of a delegate's work runs on the real surface yourself. Use a fresh `general-purpose` agent only once, for the final verification, when that check needs bulk reading or a reader who has not seen the work. Do not spawn a verifier after each fix round.
 
 You own every subagent's work. Review the diff and write your own summary.
 
-**Fresh subagents by default.** Give a fix round, a follow-up, a retry, or the next queue item to a fresh subagent with the original brief, every later directive, and the prior agent's report and branch. Continue an existing subagent only when the work needs state that lives in it and is costly to move: its checkout, its uncommitted changes, or a process it still runs.
+**One subagent per piece of work.** Send a fix round, a follow-up, or a retry on the same piece of work back to the subagent that did it, with `SendMessage`. It keeps its context and pays no new start. Spawn a fresh subagent, with the original brief, every later directive, and the prior agent's report and branch, in these cases:
+
+- The next item is a different piece of work.
+- The subagent failed the same fix twice.
+- The subagent can no longer be reached, or its context was compacted.
 
 ## Git and pull requests
 

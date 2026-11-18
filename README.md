@@ -128,6 +128,8 @@ Each skill states its purpose in the `description` line of its `SKILL.md`.
 
 **Git rules travel with the delegates.** The agent never commits on the default branch, adds no `Co-Authored-By` trailer and no AI footer, pushes with an explicit refspec, and checks the base branch of the pull request. `skills/messi-mode/worker.md` repeats these rules, because a subagent sees none of your memory.
 
+**The agent delegates less.** pstack delegates implementation in most playbooks and gives each fix round to a fresh subagent. messi-mode writes small changes in the main thread, sends a fix round back to the same subagent, and runs one fresh verifier at the end. The Cost section gives the reason.
+
 **Each playbook lists the principles to read.** As shipped, pstack tells the agent to cite only the principles it read, and the agent reads none. [cursor/plugins issue 726](https://github.com/cursor/plugins/issues/726) measured this: 0 of 72 runs read a principle file. With the list at the top of each playbook, 68 of 72 runs did. Every playbook here opens with that list.
 
 **Cursor names are replaced in the text.** The skills name Claude Code tools directly, so no adapter document is needed at run time.
@@ -157,10 +159,11 @@ If `codex` is missing or the call fails, the mode reports that seat as a dropout
 The mode spends more tokens than a plain session. Most of the extra cost comes from subagents, not from the skill text.
 
 - The mode file is about 3,500 tokens and stays in context for the session. A playbook and its principles add about 1,000 to 3,000 tokens.
-- Each subagent starts with its own copy of the system prompt and tool list. In the author's setup, which has many MCP servers, an agent that answered one line used about 53,000 tokens. Agents that did a small read-only task used 70,000 to 80,000.
-- A playbook that delegates three to five agents therefore adds roughly 250,000 to 500,000 tokens. A feature that runs `arena` and `interrogate` can pass 1,000,000.
+- Each subagent starts with its own context. In the author's setup, 8 `general-purpose` agents each started at 52,000 to 53,000 tokens. That start was a cache write in most runs, so one agent does not reuse the start of another.
+- After the start, most of what an agent processes is cache reads, which cost about a tenth of the input price. A read-only bug fix of 9 turns processed 640,000 tokens, and 561,000 of them were cache reads. Weighted by price, that run equals about 175,000 input tokens, and the start is about 38% of it.
+- The start is therefore the cost to cut. The mode delegates only when the change touches more than three files, the work can run in parallel, or the work needs bulk reading. A fix round goes back to the same subagent and does not start a new one.
 
-These numbers are estimates from a few runs in one setup. A setup with fewer MCP servers starts each agent with less.
+These numbers come from 10 agent runs in one session and one setup. No full playbook run that writes code has been measured. The Codex CLI runs the GPT seats, so those seats use your OpenAI account and no Claude tokens.
 
 ## Make it yours
 

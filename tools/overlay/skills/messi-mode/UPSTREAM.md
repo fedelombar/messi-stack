@@ -37,6 +37,7 @@ Edited in place. Every edit is a replacement in `tools/build.py`, which fails wh
 - From cursor/plugins#864: the todolist falls back to a file, delegates list steps they could not run under `Returned to parent`, and messi-mode is re-read after a compaction.
 - From cursor/plugins#1155: the transcript slug replaces every character that is not an ASCII letter or digit.
 - Small tasks skip the playbook.
+- Delegation costs a full agent start, so the mode delegates only for changes over three files, parallel work, or bulk reading. A fix round returns to the same subagent, and one fresh verifier runs at the end. pstack spawns a fresh subagent for each round.
 
 ## Not copied
 
